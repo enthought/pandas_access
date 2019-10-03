@@ -2,6 +2,7 @@ import codecs
 import os
 import platform
 import re
+import shutil
 import subprocess
 import pandas as pd
 import numpy as np
@@ -17,14 +18,14 @@ TABLE_RE = re.compile("CREATE TABLE \[(\w+)\]\s+\((.*?\));",
 DEF_RE = re.compile("\s*\[(\w+)\]\s*(.*)$")
 
 # Get executable directory
-env = os.environ.get('VIRTUAL_ENV', None)
-if env is None:
-    bin_dir = ''
-else:
-    if platform.system() == 'Windows':
-        bin_dir = os.path.join(env, 'Scripts')
-    else:
-        bin_dir = os.path.join(env, 'bin')
+bin_dir = ''
+if not shutil.which('mdb-export'):
+    env = os.environ.get('VIRTUAL_ENV', None)
+    if env is not None:
+        if platform.system() == 'Windows':
+            bin_dir = os.path.join(env, 'Scripts')
+        else:
+            bin_dir = os.path.join(env, 'bin')
 
 mdb_export = os.path.join(bin_dir, 'mdb-export')
 mdb_schema = os.path.join(bin_dir, 'mdb-schema')
